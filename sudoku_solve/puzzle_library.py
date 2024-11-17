@@ -2,6 +2,7 @@ from io import StringIO
 from typing import Final
 
 from sudoku_solve.puzzle_read import read_puzzle
+from sudoku_solve.puzzle import Puzzle
 
 EASY_PUZZLE_STR: Final[str] = """
 --942--6-
@@ -89,30 +90,33 @@ EVIL_PUZZLE_STR: Final[str] = """
 
 
 class PuzzleLibrary:
+    """
+    Provides access to a handful of sample puzzles.
+    """
     @staticmethod
-    def easy_puzzle():
+    def easy_puzzle() -> Puzzle:
         return read_puzzle(StringIO(EASY_PUZZLE_STR))
 
     @staticmethod
-    def medium_puzzle():
+    def medium_puzzle() -> Puzzle:
         return read_puzzle(StringIO(MEDIUM_PUZZLE_STR))
 
     @staticmethod
-    def hard_puzzle():
+    def hard_puzzle() -> Puzzle:
         return read_puzzle(StringIO(HARD_PUZZLE_STR))
 
     @staticmethod
-    def expert_puzzle():
+    def expert_puzzle() -> Puzzle:
         return read_puzzle(StringIO(EXPERT_PUZZLE_STR))
 
     @staticmethod
-    def master_puzzle():
+    def master_puzzle() -> Puzzle:
         return read_puzzle(StringIO(MASTER_PUZZLE_STR))
 
     @staticmethod
-    def extreme_puzzle():
+    def extreme_puzzle() -> Puzzle:
         return read_puzzle(StringIO(EXTREME_PUZZLE_STR))
 
     @staticmethod
-    def evil_puzzle():
+    def evil_puzzle() -> Puzzle:
         return read_puzzle(StringIO(EVIL_PUZZLE_STR))

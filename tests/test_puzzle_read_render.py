@@ -1,7 +1,7 @@
 import unittest
 from io import StringIO
 
-from sudoku_solve.puzzle import UnsolvablePuzzle
+from sudoku_solve.puzzle import UnsolvablePuzzle, MalformedPuzzle
 from sudoku_solve.puzzle_read import read_puzzle
 from sudoku_solve.puzzle_render import render_puzzle
 from sudoku_solve.puzzle_library import EASY_PUZZLE_STR, MEDIUM_PUZZLE_STR, HARD_PUZZLE_STR, EXPERT_PUZZLE_STR, \
@@ -51,9 +51,10 @@ class TestPuzzleRead(unittest.TestCase):
         p_str = render_puzzle(p)
         self.assertEqualStripped(EVIL_PUZZLE_STR, p_str)
 
-    def test_broken_puzzle(self) -> None:
+    def test_invalid_puzzle(self) -> None:
         try:
             read_puzzle(StringIO(
+                # This puzzle has two 4s in the top right block
                 """
                 ----874--
                 8------41
@@ -68,6 +69,82 @@ class TestPuzzleRead(unittest.TestCase):
             ))
             self.fail("Puzzle is invalid and should not load")
         except UnsolvablePuzzle:
+            pass
+
+    def test_8row_puzzle(self) -> None:
+        try:
+            read_puzzle(StringIO(
+                """
+                ----874--
+                8-------1
+                -6----2--
+                695------
+                --1--3---
+                --24-1---
+                ---9-----
+                ----1--59
+                """
+            ))
+            self.fail("Puzzle is malformed and should not load")
+        except MalformedPuzzle:
+            pass
+
+    def test_8column_puzzle(self) -> None:
+        try:
+            read_puzzle(StringIO(
+                """
+                ----874-
+                8-------
+                -6----2-
+                695-----
+                --1--3--
+                --24-1--
+                ---9----
+                ----1--5
+                2--5---6
+                """
+            ))
+            self.fail("Puzzle is malformed and should not load")
+        except MalformedPuzzle:
+            pass
+
+    def test_10row_puzzle(self) -> None:
+        try:
+            read_puzzle(StringIO(
+                """
+                ----874--
+                8-------1
+                -6----2--
+                695------
+                --1--3---
+                --24-1---
+                ---9-----
+                ----1--59
+                2--5---6-
+                2--5---6-
+                """
+            ))
+            self.fail("Puzzle is malformed and should not load")
+        except MalformedPuzzle:
+            pass
+
+    def test_10column_puzzle(self) -> None:
+        try:
+            read_puzzle(StringIO(
+                """
+                ----874---
+                8-------1-
+                -6----2---
+                695-------
+                --1--3----
+                --24-1----
+                ---9------
+                ----1--59-
+                2--5---6--
+                """
+            ))
+            self.fail("Puzzle is malformed and should not load")
+        except MalformedPuzzle:
             pass
 
     def assertEqualStripped(self, first: str, second: str, msg: str | None = None) -> None:

@@ -2,6 +2,11 @@ from typing import TextIO
 from sudoku_solve.puzzle import Puzzle, Cell, CellRow, MalformedPuzzle, UnsolvablePuzzle, set_of_all_options
 
 def read_puzzle(in_stream: TextIO) -> Puzzle:
+    """
+    Read a puzzle from a text input. The puzzle should be formated as a 9x9 grid of characters
+    :param in_stream:
+    :return:
+    """
     cell_rows = __read_rows(in_stream)
     if len(cell_rows) != 9:
         raise MalformedPuzzle(f"Invalid number of lines, expected 9, found {len(cell_rows)}")
@@ -11,7 +16,7 @@ def read_puzzle(in_stream: TextIO) -> Puzzle:
     return puzzle
 
 
-def __read_rows(in_stream) -> list[CellRow]:
+def __read_rows(in_stream: TextIO) -> list[CellRow]:
     cell_rows: list[CellRow] = []
     line_num = 0
     for line in in_stream:
@@ -19,6 +24,8 @@ def __read_rows(in_stream) -> list[CellRow]:
         if len(stripped) != 0:
             cell_rows.append(__read_row(line_num, stripped))
             line_num += 1
+            if line_num > 9:
+                raise MalformedPuzzle("Read more than nine lines of puzzle")
     return cell_rows
 
 
@@ -38,7 +45,7 @@ def __char_to_cell(char: str, x_index: int, y_index: int) -> Cell:
         raise MalformedPuzzle(f"Invalid char {char}")
 
 
-def __set_of_all_options_chars():
+def __set_of_all_options_chars() -> set[str]:
     return set(str(o) for o in set_of_all_options())
 
 

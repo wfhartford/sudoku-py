@@ -5,14 +5,14 @@ from sudoku_solve.util import single
 
 logger = logging.getLogger(__name__)
 
-"""
-This strategy attempts to find places where the only possible locations for a
-certain value within a block are in the same row or column. When this is the
-case, we can eliminate the same value from anywhere else in that row or column.
-"""
-
 
 class PointingPairsSolver(SolveStrategy):
+    """
+    This strategy attempts to find places where the only possible locations for a
+    certain value within a block are in the same row or column. When this is the
+    case, we can eliminate the same value from anywhere else in that row or column.
+    """
+
     def solve_puzzle(self, puzzle: Puzzle) -> bool:
         made_progress = False
         for block in puzzle.blocks:

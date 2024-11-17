@@ -2,6 +2,7 @@ from __future__ import annotations
 import logging
 
 from dataclasses import dataclass, field
+
 from sudoku_solve.util import single
 
 logger = logging.getLogger(__name__)
@@ -16,12 +17,15 @@ class MalformedPuzzle(Exception):
     pass
 
 
-def set_of_all_options():
+def set_of_all_options() -> set[int]:
     return {1, 2, 3, 4, 5, 6, 7, 8, 9}
 
 
 @dataclass
 class Cell:
+    """
+    A Cell in a sudoku puzzle
+    """
     x_pos: int
     y_pos: int
     options: set[int] = field(default_factory=set_of_all_options)
@@ -29,12 +33,12 @@ class Cell:
     def name(self) -> str:
         return f"Cell({self.x_pos, self.y_pos})"
 
-    def is_known(self):
+    def is_known(self) -> bool:
         return len(self.options) == 1
 
-    def value(self):
+    def value(self) -> int:
         assert self.is_known()
-        return next(iter(self.options))
+        return single(list(self.options))
 
     def must_be(self, value: int) -> bool:
         if value not in self.options:
@@ -69,6 +73,9 @@ class Cell:
 
 @dataclass
 class CellGroup:
+    """
+    A group of cells, either a row, a column, or a block.
+    """
     cells: list[Cell]
     group_index: int
 
@@ -105,28 +112,40 @@ class CellGroup:
 
 @dataclass
 class CellRow(CellGroup):
+    """
+    A horizontal row of cells
+    """
     pass
 
 
 @dataclass
 class CellColumn(CellGroup):
+    """
+    A vertical column of cells.
+    """
     pass
 
 
 @dataclass
 class CellBlock(CellGroup):
+    """
+    A three by three block of cells.
+    """
     pass
 
 
 @dataclass
 class CellRelatedGroups:
+    """
+    A cell and the three groups that it is in: one row, one column, and one block.
+    """
     cell: Cell
     row: CellRow
     column: CellColumn
     block: CellBlock
     groups: list[CellGroup] = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.groups = [self.row, self.column, self.block]
 
     def name(self) -> str:
@@ -135,13 +154,16 @@ class CellRelatedGroups:
 
 @dataclass
 class Puzzle:
+    """
+    A sudoku puzzle.
+    """
     rows: list[CellRow]
     columns: list[CellColumn] = field(init=False)
     blocks: list[CellBlock] = field(init=False)
     cells: list[Cell] = field(init=False)
-    groups: list[CellGroup] = field(init=False)
+    groups: list[CellRow | CellColumn | CellBlock] = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.columns = [self.__column(i) for i in range(9)]
         self.blocks = [self.__block(i) for i in range(9)]
         self.groups = self.rows + self.columns + self.blocks

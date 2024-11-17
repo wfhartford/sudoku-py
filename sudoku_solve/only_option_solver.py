@@ -7,13 +7,14 @@ from sudoku_solve.util import single
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-"""
-This simple solver looks in each group for places where a specific value in
-only possible in one cell.
-"""
-
 
 class OnlyOptionSolver(SolveStrategy):
+    """
+    This simple solver looks in each group for places where a specific value is
+    only possible in one cell and sets that cell to the value, eliminating any
+    other options.
+    """
+
     def solve_puzzle(self, puzzle: Puzzle) -> bool:
         made_progress = False
         for group in puzzle.groups:

@@ -1,7 +1,7 @@
 from sudoku_solve.puzzle import Puzzle, CellRow, Cell
 
 
-def print_puzzle(puzzle: Puzzle, name: str):
+def print_puzzle(puzzle: Puzzle, name: str) -> None:
     print(f"{name}:")
     print(render_puzzle(puzzle))
     print()
